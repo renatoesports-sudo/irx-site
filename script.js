@@ -58,42 +58,64 @@ document.querySelector("#year").textContent = new Date().getFullYear();
 lucide.createIcons();
 
 if (shuffleGrid && shuffleImage) {
-  const imagePaths = Array.from(
-    { length: 16 },
-    (_, index) => `assets/shuffle/shuffle-${String(index + 1).padStart(2, "0")}.webp`
-  );
-
   const tiles = Array.from({ length: 16 }, (_, index) => {
     const tile = document.createElement("span");
 
     tile.className = "shuffle-tile";
-    tile.style.backgroundImage = `url("${imagePaths[index]}")`;
+    tile.style.backgroundImage = `url("assets/shuffle/shuffle-${String(index + 1).padStart(2, "0")}.webp")`;
     shuffleGrid.appendChild(tile);
 
     return tile;
   });
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let animating = false;
 
   const shuffleTiles = () => {
-    const shuffledImages = [...imagePaths];
+    if (animating || document.hidden) return;
 
-    for (let current = shuffledImages.length - 1; current > 0; current -= 1) {
+    animating = true;
+    const shuffledTiles = [...tiles];
+    const firstPositions = new Map(
+      tiles.map((tile) => [tile, tile.getBoundingClientRect()])
+    );
+
+    for (let current = shuffledTiles.length - 1; current > 0; current -= 1) {
       const random = Math.floor(Math.random() * (current + 1));
-      [shuffledImages[current], shuffledImages[random]] = [
-        shuffledImages[random],
-        shuffledImages[current],
+      [shuffledTiles[current], shuffledTiles[random]] = [
+        shuffledTiles[random],
+        shuffledTiles[current],
       ];
     }
 
+    shuffledTiles.forEach((tile) => shuffleGrid.appendChild(tile));
+
+    const lastPositions = new Map(
+      tiles.map((tile) => [tile, tile.getBoundingClientRect()])
+    );
+
+    tiles.forEach((tile) => {
+      const first = firstPositions.get(tile);
+      const last = lastPositions.get(tile);
+      tile.style.transition = "none";
+      tile.style.transform = `translate(${first.left - last.left}px, ${first.top - last.top}px) scale(.97)`;
+    });
+
     shuffleImage.classList.add("is-shuffling");
+    void shuffleGrid.offsetWidth;
+
+    tiles.forEach((tile) => {
+      tile.style.transition = "";
+      tile.style.transform = "translate(0, 0) scale(1)";
+    });
 
     window.setTimeout(() => {
-      tiles.forEach((tile, index) => {
-        tile.style.backgroundImage = `url("${shuffledImages[index]}")`;
-      });
       shuffleImage.classList.remove("is-shuffling");
-    }, 380);
+      tiles.forEach((tile) => {
+        tile.style.transform = "";
+      });
+      animating = false;
+    }, 1300);
   };
 
   if (!reducedMotion) {
