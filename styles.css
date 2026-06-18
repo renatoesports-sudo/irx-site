@@ -97,9 +97,9 @@ h2 { margin-bottom: 24px; font-size: clamp(34px, 4.2vw, 54px); line-height: 1.1;
 .shuffle-tile {
   min-width: 0;
   min-height: 0;
-  background-image: url("assets/hero-irx.png");
   background-repeat: no-repeat;
-  background-size: 400% 400%;
+  background-size: cover;
+  background-position: center;
   filter: saturate(.72) contrast(1.05);
   transition:
     transform 1.15s cubic-bezier(.2,.75,.2,1),

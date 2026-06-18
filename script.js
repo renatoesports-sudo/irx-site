@@ -60,11 +60,9 @@ lucide.createIcons();
 if (shuffleGrid && shuffleImage) {
   const tiles = Array.from({ length: 16 }, (_, index) => {
     const tile = document.createElement("span");
-    const row = Math.floor(index / 4);
-    const column = index % 4;
 
     tile.className = "shuffle-tile";
-    tile.style.backgroundPosition = `${column * 33.333}% ${row * 33.333}%`;
+    tile.style.backgroundImage = `url("assets/shuffle/shuffle-${String(index + 1).padStart(2, "0")}.webp")`;
     tile.dataset.home = String(index);
     shuffleGrid.appendChild(tile);
 
