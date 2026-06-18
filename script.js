@@ -50,7 +50,7 @@ document.querySelectorAll(".reveal").forEach((element) => observer.observe(eleme
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  formNote.textContent = "Dados validados. Para receber as mensagens, conecte este formulário ao e-mail ou WhatsApp oficial do IRX.";
+  formNote.textContent = "Interesse registrado. O envio ao canal de atendimento será ativado em breve.";
   formNote.classList.add("success");
 });
 
