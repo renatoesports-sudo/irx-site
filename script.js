@@ -58,12 +58,16 @@ document.querySelector("#year").textContent = new Date().getFullYear();
 lucide.createIcons();
 
 if (shuffleGrid && shuffleImage) {
+  const imagePaths = Array.from(
+    { length: 16 },
+    (_, index) => `assets/shuffle/shuffle-${String(index + 1).padStart(2, "0")}.webp`
+  );
+
   const tiles = Array.from({ length: 16 }, (_, index) => {
     const tile = document.createElement("span");
 
     tile.className = "shuffle-tile";
-    tile.style.backgroundImage = `url("assets/shuffle/shuffle-${String(index + 1).padStart(2, "0")}.webp")`;
-    tile.dataset.home = String(index);
+    tile.style.backgroundImage = `url("${imagePaths[index]}")`;
     shuffleGrid.appendChild(tile);
 
     return tile;
@@ -72,28 +76,24 @@ if (shuffleGrid && shuffleImage) {
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const shuffleTiles = () => {
-    const positions = tiles.map((_, index) => index);
+    const shuffledImages = [...imagePaths];
 
-    for (let current = positions.length - 1; current > 0; current -= 1) {
+    for (let current = shuffledImages.length - 1; current > 0; current -= 1) {
       const random = Math.floor(Math.random() * (current + 1));
-      [positions[current], positions[random]] = [positions[random], positions[current]];
+      [shuffledImages[current], shuffledImages[random]] = [
+        shuffledImages[random],
+        shuffledImages[current],
+      ];
     }
 
     shuffleImage.classList.add("is-shuffling");
 
-    tiles.forEach((tile, index) => {
-      const target = positions[index];
-      const homeRow = Math.floor(index / 4);
-      const homeColumn = index % 4;
-      const targetRow = Math.floor(target / 4);
-      const targetColumn = target % 4;
-      const x = (targetColumn - homeColumn) * 100;
-      const y = (targetRow - homeRow) * 100;
-
-      tile.style.transform = `translate(${x}%, ${y}%)`;
-    });
-
-    window.setTimeout(() => shuffleImage.classList.remove("is-shuffling"), 900);
+    window.setTimeout(() => {
+      tiles.forEach((tile, index) => {
+        tile.style.backgroundImage = `url("${shuffledImages[index]}")`;
+      });
+      shuffleImage.classList.remove("is-shuffling");
+    }, 380);
   };
 
   if (!reducedMotion) {
